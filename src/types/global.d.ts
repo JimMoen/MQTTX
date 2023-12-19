@@ -250,7 +250,7 @@ declare global {
     connectTimeout: number
     reconnect: boolean
     reconnectPeriod: number
-    username: string
+    username: string | null
     password: string
     path: string
     certType?: CertType

@@ -78,14 +78,13 @@ const getClientOptions = (record: ConnectionModel): IClientOptions => {
   // Authentication
   // MQTT 5 allows Password to be used without a Username
   // MQTT 3.1.1 requires a Username if a Password is set
-  if (username !== '') {
+  if (username === undefined || username === '') {
+    options.username = null
+  } else {
     options.username = username
   }
   if (password !== '') {
     options.password = password
-    if (username === undefined || username === '') {
-      options.username = ''
-    }
   }
   // SSL
   if (ssl) {
@@ -124,6 +123,7 @@ const getClientOptions = (record: ConnectionModel): IClientOptions => {
   }
   // Auto Resubscribe, Valid only when reconnecting
   options.resubscribe = Store.getters.autoResub
+  console.log(options)
   return options
 }
 
@@ -151,8 +151,8 @@ export const createClient = (
       topicAliasMaximum: options.properties ? options.properties.topicAliasMaximum : undefined,
     }
     const { password, username, protocolVersion } = tempOptions
-    if (password && (username === undefined || username === '') && protocolVersion !== 5) {
-      return reject(new Error('MQTT 3.1.1 requires a Username if a Password is set'))
+    if (password && username === null && protocolVersion !== 5) {
+      return reject(new Error('Username must be set when non-MQTTv5 if Password is set'))
     }
     const curConnectClient: MqttClient = mqtt.connect(url, tempOptions)
     return resolve({ curConnectClient, connectUrl: url })

@@ -44,7 +44,7 @@ export default class ConnectionEntity {
   reconnectPeriod!: number
 
   @Column({ type: 'varchar', nullable: true })
-  username!: string
+  username!: string | null
 
   @Column({ type: 'varchar', nullable: true })
   password!: string
